@@ -140,24 +140,24 @@ function displayRiskSourcesResult(prob) {
                     <th>Ймовірність</th>
                 </tr>
                 <tr>
-                    <td>⚙️ Технічні (t_c^RS)</td>
-                    <td>${prob.t_c_RS.toFixed(4)}</td>
+                    <td>⚙️ Технічні</td>
+                    <td>${(prob.t_c_RS * 100).toFixed(2)}%</td>
                 </tr>
                 <tr>
-                    <td>💰 Вартісні (c_c^RS)</td>
-                    <td>${prob.c_c_RS.toFixed(4)}</td>
+                    <td>💰 Вартісні</td>
+                    <td>${(prob.c_c_RS * 100).toFixed(2)}%</td>
                 </tr>
                 <tr>
-                    <td>📅 Планові (p_c^RS)</td>
-                    <td>${prob.p_c_RS.toFixed(4)}</td>
+                    <td>📅 Планові</td>
+                    <td>${(prob.p_c_RS * 100).toFixed(2)}%</td>
                 </tr>
                 <tr>
-                    <td>👥 Управління (m_c^RS)</td>
-                    <td>${prob.m_c_RS.toFixed(4)}</td>
+                    <td>👥 Управління</td>
+                    <td>${(prob.m_c_RS * 100).toFixed(2)}%</td>
                 </tr>
                 <tr style="font-weight:bold; background:#f0f0f0;">
-                    <td>🎯 Сумарний ризик (R_Σ^RS)</td>
-                    <td>${prob.R_sum_RS.toFixed(4)}</td>
+                    <td>🎯 Сумарний ризик</td>
+                    <td>${(prob.R_sum_RS * 100).toFixed(2)}%</td>
                 </tr>
             </table>
         </div>
@@ -343,16 +343,16 @@ function displayAnalysisResult(analysis) {
     container.innerHTML = `
         <h4>📊 Результати аналізу ризику ${analysis.riskId.toUpperCase()}</h4>
         <div class="stat">
-            <span class="stat-label">Ймовірність (er^p):</span>
-            <span class="stat-value">${analysis.probability.toFixed(4)}</span>
+            <span class="stat-label">Ймовірність:</span>
+            <span class="stat-value">${(analysis.probability * 100).toFixed(2)}%</span>
         </div>
         <div class="stat">
-            <span class="stat-label">Збитки (lrer^p):</span>
-            <span class="stat-value">${analysis.loss.toFixed(4)}</span>
+            <span class="stat-label">Збитки:</span>
+            <span class="stat-value">${(analysis.loss * 100).toFixed(2)}%</span>
         </div>
         <div class="stat">
-            <span class="stat-label">Величина ризику (vrer^p):</span>
-            <span class="stat-value"><strong>${analysis.magnitude.toFixed(4)}</strong></span>
+            <span class="stat-label">Величина ризику:</span>
+            <span class="stat-value"><strong>${(analysis.magnitude * 100).toFixed(2)}%</strong></span>
         </div>
         <div class="stat">
             <span class="stat-label">Класифікація:</span>
@@ -385,9 +385,6 @@ function displayPrioritizationResult(risks) {
     }
 
     let html = `<h4>🎯 Ранжовані ризики</h4>
-        <p><strong>Параметри розрахунку:</strong> min=${risks[0].priorityThresholds.min.toFixed(4)}, 
-        max=${risks[0].priorityThresholds.max.toFixed(4)}, 
-        mpr=${risks[0].priorityThresholds.mpr.toFixed(4)}</p>
         <table class="result-table">
             <tr>
                 <th>Ранг</th>
@@ -401,7 +398,7 @@ function displayPrioritizationResult(risks) {
         html += `<tr>
             <td>${index + 1}</td>
             <td>${risk.riskId.toUpperCase()}</td>
-            <td>${risk.magnitude.toFixed(4)}</td>
+            <td>${(risk.magnitude * 100).toFixed(2)}%</td>
             <td class="${priorityClass}">${risk.priority}</td>
         </tr>`;
     });
@@ -600,15 +597,15 @@ function displayMonitoringResult(data) {
                 <h5>📉 ДО заходу</h5>
                 <div class="stat">
                     <span>Ймовірність:</span>
-                    <span>${comp.before.probability.toFixed(4)}</span>
+                    <span>${(comp.before.probability * 100).toFixed(2)}%</span>
                 </div>
                 <div class="stat">
                     <span>Збитки:</span>
-                    <span>${comp.before.loss.toFixed(4)}</span>
+                    <span>${(comp.before.loss * 100).toFixed(2)}%</span>
                 </div>
                 <div class="stat">
                     <span><strong>Величина:</strong></span>
-                    <span><strong>${comp.before.magnitude.toFixed(4)}</strong></span>
+                    <span><strong>${(comp.before.magnitude * 100).toFixed(2)}%</strong></span>
                 </div>
                 <div class="stat">
                     <span>Класифікація:</span>
@@ -619,15 +616,15 @@ function displayMonitoringResult(data) {
                 <h5>📈 ПІСЛЯ заходу</h5>
                 <div class="stat">
                     <span>Ймовірність:</span>
-                    <span>${comp.after.probability.toFixed(4)}</span>
+                    <span>${(comp.after.probability * 100).toFixed(2)}%</span>
                 </div>
                 <div class="stat">
                     <span>Збитки:</span>
-                    <span>${comp.after.loss.toFixed(4)}</span>
+                    <span>${(comp.after.loss * 100).toFixed(2)}%</span>
                 </div>
                 <div class="stat">
                     <span><strong>Величина:</strong></span>
-                    <span><strong>${comp.after.magnitude.toFixed(4)}</strong></span>
+                    <span><strong>${(comp.after.magnitude * 100).toFixed(2)}%</strong></span>
                 </div>
                 <div class="stat">
                     <span>Класифікація:</span>
@@ -639,13 +636,10 @@ function displayMonitoringResult(data) {
             <h5>${improvedText}</h5>
             <div class="stat">
                 <span>Зменшення ризику:</span>
-                <span><strong>${comp.reduction.toFixed(4)} (${comp.reductionPercentage.toFixed(2)}%)</strong></span>
+                <span><strong>${(comp.reduction * 100).toFixed(2)}% (${comp.reductionPercentage.toFixed(2)}% відносно початкового значення)</strong></span>
             </div>
         </div>
     `;
-
-    const compContainer = document.getElementById('comparisonResult');
-    compContainer.innerHTML = container.innerHTML;
 }
 
 // ==================== ДОПОМІЖНІ ФУНКЦІЇ ====================
