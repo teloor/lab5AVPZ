@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система Управління Ризиками</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Система Управління Ризиками Розробки ПЗ</h1>
+            <p class="subtitle">Прототип для 4-етапного управління ризиками проєкту</p>
+        </header>
+
+        <!-- Навігація між етапами -->
+        <nav class="stage-nav">
+            <button class="stage-btn active" data-stage="1">Етап 1: Ідентифікація</button>
+            <button class="stage-btn" data-stage="2">Етап 2: Аналіз</button>
+            <button class="stage-btn" data-stage="3">Етап 3: Планування</button>
+            <button class="stage-btn" data-stage="4">Етап 4: Моніторинг</button>
+        </nav>
+
+        <!-- Етап 1: Ідентифікація -->
+        <section id="stage1" class="stage-content active">
+            <h2>Етап 1: Ідентифікація Ризиків</h2>
+            
+            <div class="card">
+                <h3>1.1. Ідентифікація Джерел Ризиків (18 джерел)</h3>
+                <p class="hint">Відмітьте джерела ризиків, які присутні у вашому проєкті (1 = присутній, 0 = відсутній)</p>
+                <div id="riskSourcesForm"></div>
+                <button onclick="calculateRiskSources()" class="btn btn-primary">Розрахувати ймовірності груп</button>
+                <div id="riskSourcesResult" class="result"></div>
+            </div>
+
+            <div class="card">
+                <h3>1.2. Ідентифікація Подій Ризику (46 подій)</h3>
+                <p class="hint">Виберіть ризикові події, релевантні для вашого проєкту</p>
+                <div id="riskEventsForm"></div>
+                <button onclick="selectRiskEvents()" class="btn btn-primary">Зберегти вибрані події</button>
+                <div id="riskEventsResult" class="result"></div>
+            </div>
+        </section>
+
+        <!-- Етап 2: Аналіз -->
+        <section id="stage2" class="stage-content">
+            <h2>Етап 2: Аналіз Ризиків</h2>
+            
+            <div class="card">
+                <h3>Експертне Оцінювання Ризиків</h3>
+                <p class="hint">Для кожного вибраного ризику введіть оцінки 10 експертів</p>
+                
+                <div class="form-group">
+                    <label>Виберіть ризик для аналізу:</label>
+                    <select id="riskToAnalyze" onchange="showExpertForm()"></select>
+                </div>
+
+                <div id="expertForm" style="display:none;">
+                    <h4>Оцінки експертів (0.0 - 1.0)</h4>
+                    
+                    <div class="expert-inputs">
+                        <div>
+                            <strong>Ймовірність виникнення:</strong>
+                            <div id="probabilityInputs"></div>
+                        </div>
+                        <div>
+                            <strong>Розмір збитків:</strong>
+                            <div id="lossInputs"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="useWeights" onchange="toggleWeights()">
+                            Використати ваги експертів
+                        </label>
+                        <div id="weightInputs" style="display:none;"></div>
+                    </div>
+
+                    <button onclick="analyzeRisk()" class="btn btn-primary">Проаналізувати ризик</button>
+                </div>
+
+                <div id="analysisResult" class="result"></div>
+            </div>
+
+            <div class="card">
+                <h3>Ранжування та Пріоритезація</h3>
+                <button onclick="prioritizeRisks()" class="btn btn-primary">Розрахувати пріоритети всіх ризиків</button>
+                <div id="prioritizationResult" class="result"></div>
+            </div>
+        </section>
+
+        <!-- Етап 3: Планування -->
+        <section id="stage3" class="stage-content">
+            <h2>Етап 3: Планування Ризиків</h2>
+            
+            <div class="card">
+                <h3>Призначення Заходів із Зменшення Ризику</h3>
+                <p class="hint">Виберіть захід для кожного проаналізованого ризику</p>
+                <div id="mitigationForm"></div>
+                <div id="mitigationResult" class="result"></div>
+            </div>
+        </section>
+
+        <!-- Етап 4: Моніторинг -->
+        <section id="stage4" class="stage-content">
+            <h2>Етап 4: Моніторинг Ризиків</h2>
+            
+            <div class="card">
+                <h3>Оцінювання Ефективності Заходів</h3>
+                <p class="hint">Введіть нові експертні оцінки після застосування заходу</p>
+                
+                <div class="form-group">
+                    <label>Виберіть ризик для моніторингу:</label>
+                    <select id="riskToMonitor" onchange="showMonitoringForm()"></select>
+                </div>
+
+                <div id="monitoringForm" style="display:none;">
+                    <h4>Нові оцінки експертів після застосування заходу</h4>
+                    
+                    <div class="expert-inputs">
+                        <div>
+                            <strong>Нова ймовірність:</strong>
+                            <div id="newProbabilityInputs"></div>
+                        </div>
+                        <div>
+                            <strong>Нові збитки:</strong>
+                            <div id="newLossInputs"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="useWeightsMonitoring" onchange="toggleWeightsMonitoring()">
+                            Використати ваги експертів
+                        </label>
+                        <div id="weightInputsMonitoring" style="display:none;"></div>
+                    </div>
+
+                    <button onclick="monitorRisk()" class="btn btn-primary">Оцінити ефективність</button>
+                </div>
+
+                <div id="monitoringResult" class="result"></div>
+            </div>
+
+            <div class="card">
+                <h3>Порівняння Ризиків ДО та ПІСЛЯ</h3>
+                <div id="comparisonResult" class="result"></div>
+            </div>
+        </section>
+
+        <footer>
+            <button onclick="resetProject()" class="btn btn-secondary">Скинути всі дані</button>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
