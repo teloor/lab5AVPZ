@@ -71,7 +71,10 @@ async function loadInitialData() {
 
 function renderRiskSourcesForm() {
     const container = document.getElementById('riskSourcesForm');
-    let html = '';
+    let html = '<div class="toggle-all-container">';
+    html += '<button class="toggle-all-btn" onclick="toggleAllCategories(\'source\', true)">Розгорнути всі</button> ';
+    html += '<button class="toggle-all-btn" onclick="toggleAllCategories(\'source\', false)">Згорнути всі</button>';
+    html += '</div>';
 
     const categories = [
         { key: 'technical', title: 'Технічні ризики (T^RS)', emoji: '⚙️' },
@@ -80,9 +83,14 @@ function renderRiskSourcesForm() {
         { key: 'management', title: 'Ризики управління (M^RS)', emoji: '👥' }
     ];
 
-    categories.forEach(cat => {
-        html += `<div class="risk-category">
-            <h4>${cat.emoji} ${cat.title}</h4>`;
+    categories.forEach((cat, index) => {
+        const isExpanded = index === 0 ? 'expanded' : '';
+        html += `<div class="risk-category ${isExpanded}" data-category="source-${cat.key}">
+            <div class="risk-category-header" onclick="toggleCategory(this.parentElement)">
+                <h4>${cat.emoji} ${cat.title}</h4>
+                <span class="risk-category-toggle">▼</span>
+            </div>
+            <div class="risk-category-content">`;
         
         riskSources[cat.key].risks.forEach(risk => {
             html += `<div class="risk-item">
@@ -92,7 +100,7 @@ function renderRiskSourcesForm() {
             </div>`;
         });
 
-        html += `</div>`;
+        html += `</div></div>`;
     });
 
     container.innerHTML = html;
@@ -158,7 +166,10 @@ function displayRiskSourcesResult(prob) {
 
 function renderRiskEventsForm() {
     const container = document.getElementById('riskEventsForm');
-    let html = '';
+    let html = '<div class="toggle-all-container">';
+    html += '<button class="toggle-all-btn" onclick="toggleAllCategories(\'event\', true)">Розгорнути всі</button> ';
+    html += '<button class="toggle-all-btn" onclick="toggleAllCategories(\'event\', false)">Згорнути всі</button>';
+    html += '</div>';
 
     const categories = [
         { key: 'technical', title: 'Технічні події (T^R)', emoji: '⚙️' },
@@ -167,9 +178,14 @@ function renderRiskEventsForm() {
         { key: 'management', title: 'Події управління (M^R)', emoji: '👥' }
     ];
 
-    categories.forEach(cat => {
-        html += `<div class="risk-category">
-            <h4>${cat.emoji} ${cat.title} (${riskEvents[cat.key].length} подій)</h4>`;
+    categories.forEach((cat, index) => {
+        const isExpanded = index === 0 ? 'expanded' : '';
+        html += `<div class="risk-category ${isExpanded}" data-category="event-${cat.key}">
+            <div class="risk-category-header" onclick="toggleCategory(this.parentElement)">
+                <h4>${cat.emoji} ${cat.title} (${riskEvents[cat.key].length} подій)</h4>
+                <span class="risk-category-toggle">▼</span>
+            </div>
+            <div class="risk-category-content">`;
         
         riskEvents[cat.key].forEach(event => {
             html += `<div class="risk-item">
@@ -178,7 +194,7 @@ function renderRiskEventsForm() {
             </div>`;
         });
 
-        html += `</div>`;
+        html += `</div></div>`;
     });
 
     container.innerHTML = html;
@@ -233,21 +249,24 @@ function showExpertForm() {
 
     form.style.display = 'block';
     
-    // Генеруємо поля для 10 експертів
+    // Генеруємо поля для 10 експертів в компактному форматі
     const probContainer = document.getElementById('probabilityInputs');
     const lossContainer = document.getElementById('lossInputs');
+    
+    probContainer.className = 'expert-inputs-compact';
+    lossContainer.className = 'expert-inputs-compact';
     
     let probHtml = '';
     let lossHtml = '';
     
     for (let i = 1; i <= 10; i++) {
-        probHtml += `<div class="expert-input">
-            <label>Експерт ${i}:</label>
+        probHtml += `<div class="expert-input-compact">
+            <label>Е${i}</label>
             <input type="number" step="0.01" min="0" max="1" value="0.5" id="prob_${i}">
         </div>`;
         
-        lossHtml += `<div class="expert-input">
-            <label>Експерт ${i}:</label>
+        lossHtml += `<div class="expert-input-compact">
+            <label>Е${i}</label>
             <input type="number" step="0.01" min="0" max="1" value="0.5" id="loss_${i}">
         </div>`;
     }
@@ -482,17 +501,20 @@ function showMonitoringForm() {
     const newProbContainer = document.getElementById('newProbabilityInputs');
     const newLossContainer = document.getElementById('newLossInputs');
     
+    newProbContainer.className = 'expert-inputs-compact';
+    newLossContainer.className = 'expert-inputs-compact';
+    
     let probHtml = '';
     let lossHtml = '';
     
     for (let i = 1; i <= 10; i++) {
-        probHtml += `<div class="expert-input">
-            <label>Експерт ${i}:</label>
+        probHtml += `<div class="expert-input-compact">
+            <label>Е${i}</label>
             <input type="number" step="0.01" min="0" max="1" value="0.3" id="new_prob_${i}">
         </div>`;
         
-        lossHtml += `<div class="expert-input">
-            <label>Експерт ${i}:</label>
+        lossHtml += `<div class="expert-input-compact">
+            <label>Е${i}</label>
             <input type="number" step="0.01" min="0" max="1" value="0.3" id="new_loss_${i}">
         </div>`;
     }
@@ -643,4 +665,25 @@ async function resetProject() {
         console.error('Помилка скидання:', error);
         alert('Помилка скидання даних');
     }
+}
+
+// ==================== COLLAPSIBLE UTILITIES ====================
+
+function toggleCategory(categoryElement) {
+    categoryElement.classList.toggle('expanded');
+}
+
+function toggleAllCategories(type, expand) {
+    const categories = document.querySelectorAll(`[data-category^="${type}-"]`);
+    categories.forEach(cat => {
+        if (expand) {
+            cat.classList.add('expanded');
+        } else {
+            cat.classList.remove('expanded');
+        }
+    });
+}
+
+function toggleCard(cardElement) {
+    cardElement.classList.toggle('expanded');
 }
